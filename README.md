@@ -66,3 +66,19 @@ operator : define which operator this task will use.
 flow : define DAG pipeline  
 
 
+#Pipeline 
+
+![pipeline diagram](./docs/image/pipeline.png)
+
+pipeline line included 3 operator 
+
+- `airflow.operators.dummy_operator.DummyOperator` "start" : doing nothing just telling the starting point.
+- `airflow.providers.google.cloud.transfers.postgres_to_gcs.PostgresToGCSOperator` "load_to_gcs" : using PostgresToGCSOperator to extract data from postgres sql formatted into json then load into GCS
+- `operators.custom_gcs_to_bq_operator.CustomGcsToBQOperator` "gcs_to_bq" : implemented of GCSToBigQueryOperator reading file from gcs then load into BQ
+
+
+
+
+  
+
+
