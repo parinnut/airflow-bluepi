@@ -29,7 +29,7 @@ tasks:
     write_disposition: WRITE_TRUNCATE
     bigquery_conn_id: bluepi_bq
     autodetect: False
-    schema_file: /Users/parin.lou/PycharmProjects/aiflow-buildpi/schema_data/user_log.schema
+    schema_file: ./dags/config/schema_data/user_log.schema
 
 flow:
   - start >> load_to_gcs >> gcs_to_bq

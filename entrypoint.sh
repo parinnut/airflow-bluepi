@@ -163,7 +163,7 @@ cd ${airflow_home}
 
 INITDB=${airflow_home}/airflow.db
 if [ ! -f "$INITDB" ]; then
-    airflow initdb
+    airflow db init
 fi
 
 if [ ${1} == "scheduler" ]; then
