@@ -16,18 +16,18 @@ services:
                 max-size: 100m
                 max-file: "100"
 
-    external-postgress:
-        image: postgres
-        environment:
-            - POSTGRES_USER=airflow
-            - POSTGRES_PASSWORD=airflow
-            - POSTGRES_DB=postgresdb
-        ports: 
-            - 5433:5432
-        logging:
-            options:
-                max-size: 100m
-                max-file: "100"
+#    external-postgress:
+#        image: postgres
+#        environment:
+#            - POSTGRES_USER=airflow
+#            - POSTGRES_PASSWORD=airflow
+#            - POSTGRES_DB=postgresdb
+#        ports:
+#            - 5433:5432
+#        logging:
+#            options:
+#                max-size: 100m
+#                max-file: "100"
     
     init-container:
         image: dp.airflow
