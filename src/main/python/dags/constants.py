@@ -1,0 +1,2 @@
+class Timezone:
+    UTC = "UTC"

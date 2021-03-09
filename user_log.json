@@ -1,0 +1,6 @@
+{"action": "login", "created_at": 1581878765.934519, "id": "4b796e06-3178-4133-ad30-dc505bfc13f5", "status": 0, "updated_at": 1581878765.934519, "user_id": "55514cf0-3026-404f-8ea3-f41b00bdf6b5"}
+{"action": "login", "created_at": 1581878766.934519, "id": "8745cacb-f8aa-4294-b824-2d3a5c50f171", "status": 0, "updated_at": 1581878766.934519, "user_id": "55514cf0-3026-404f-8ea3-f41b00bdf6b5"}
+{"action": "change password", "created_at": 1581879007.934519, "id": "6cfd027d-b50b-4855-b279-91f99ce4476d", "status": 1, "updated_at": 1581879007.934519, "user_id": "55514cf0-3026-404f-8ea3-f41b00bdf6b5"}
+{"action": "login", "created_at": 1581879367.934519, "id": "c0c97762-694b-45fd-a41e-7304313eab82", "status": 1, "updated_at": 1581879367.934519, "user_id": "55514cf0-3026-404f-8ea3-f41b00bdf6b5"}
+{"action": "login", "created_at": 1581878888.934519, "id": "59131a90-62c9-40d8-899e-31c3dee8ad7e", "status": 1, "updated_at": 1581878888.934519, "user_id": "d0e73a35-ff6a-4f64-89b4-ed2b813782a3"}
+{"action": "logout", "created_at": 1581879127.934519, "id": "5bccf37b-5d03-4c54-a76e-5eb54a3290a5", "status": 1, "updated_at": 1581879127.934519, "user_id": "d0e73a35-ff6a-4f64-89b4-ed2b813782a3"}

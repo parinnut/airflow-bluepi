@@ -1,0 +1,148 @@
+version: '2.1'
+services:
+    redis:
+        image: redis
+
+    postgres:
+        image: postgres
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=airflow
+        ports: 
+            - 5432:5432
+        logging:
+            options:
+                max-size: 100m
+                max-file: "100"
+
+    external-postgress:
+        image: postgres
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=postgresdb
+        ports: 
+            - 5433:5432
+        logging:
+            options:
+                max-size: 100m
+                max-file: "100"
+    
+    init-container:
+        image: dp.airflow
+        build:
+            context: .
+            dockerfile: Dockerfile
+        depends_on: ["postgres"]
+        environment:
+            - AIRFLOW_HOME=/opt/airflow
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CORE__FERNET_KEY=9ok4wL2hRRRTnc0piAGgEW9TIMlt_X2PM3T_mKrfIPQ=
+            - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/1
+        command:
+            - initdb
+
+    webserver:
+        image: dp.airflow
+        depends_on:
+            - postgres
+            - redis
+        restart: always
+        environment:
+            - AIRFLOW_HOME=/opt/airflow
+            - AIRFLOW__CORE__LOAD_EXAMPLES=False
+            - AIRFLOW__CORE__DEFAULT_TIMEZONE=Asia/Bangkok
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CORE__FERNET_KEY=9ok4wL2hRRRTnc0piAGgEW9TIMlt_X2PM3T_mKrfIPQ=
+            - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/1
+            - AIRFLOW__DAG_DIR_LIST_INTERVAL=30
+        logging:
+            options:
+                max-size: 10m
+                max-file: "3"
+        ports:
+            - "8080:8080"
+        command:
+            - webserver
+        volumes:
+            - ./src/main/python/dags:/opt/airflow/dags
+        healthcheck:
+            test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
+            interval: 30s
+            timeout: 30s
+            retries: 3
+
+    flower:
+        image: dp.airflow
+        restart: always
+        depends_on:
+            - redis
+        environment:
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+            - AIRFLOW_HOME=/opt/airflow
+            - AIRFLOW__CORE__DEFAULT_TIMEZONE=Asia/Bangkok
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/1
+            - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CORE__FERNET_KEY=9ok4wL2hRRRTnc0piAGgEW9TIMlt_X2PM3T_mKrfIPQ=
+        ports:
+            - "5555:5555"
+        command: flower
+        volumes:
+            - ./src/main/python/dags:/opt/airflow/dags
+
+    scheduler:
+        image: dp.airflow
+        restart: always
+        depends_on:
+            - webserver
+        environment:
+            - AIRFLOW_HOME=/opt/airflow
+            - AIRFLOW__CORE__LOAD_EXAMPLES=False
+            - AIRFLOW__CORE__DEFAULT_TIMEZONE=Asia/Bangkok
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CORE__FERNET_KEY=9ok4wL2hRRRTnc0piAGgEW9TIMlt_X2PM3T_mKrfIPQ=
+            - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/1
+            - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__DAG_DIR_LIST_INTERVAL=30
+        command: scheduler
+        volumes:
+            - ./src/main/python/dags:/opt/airflow/dags
+
+    worker:
+        image: dp.airflow
+        restart: always
+        depends_on:
+            - scheduler
+        environment:
+            - AIRFLOW_HOME=/opt/airflow
+            - AIRFLOW__CORE__FERNET_KEY=9ok4wL2hRRRTnc0piAGgEW9TIMlt_X2PM3T_mKrfIPQ=
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/1
+            - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres:5432/airflow
+        command: worker
+        volumes:
+            - ./src/main/python/dags:/opt/airflow/dags
+
+    worker_2:
+        image: dp.airflow
+        restart: always
+        depends_on:
+            - scheduler
+        environment:
+            - AIRFLOW_HOME=/opt/airflow
+            - AIRFLOW__CORE__FERNET_KEY=9ok4wL2hRRRTnc0piAGgEW9TIMlt_X2PM3T_mKrfIPQ=
+            - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/1
+            - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres:5432/airflow
+        command: worker
+        volumes:
+            - ./src/main/python/dags:/opt/airflow/dags
