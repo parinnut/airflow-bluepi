@@ -11,8 +11,7 @@ from dagbuilder.utils import read_config, list_config_files
 # elif not airflow_dags_config_path:
 #     config_default_path = "dags/config"
 
-# airflow_home = os.environ.get("AIRFLOW_HOME")
-airflow_home = "/Users/parin.lou/PycharmProjects/aiflow-buildpi/src/main/python"
+airflow_home = os.environ.get("AIRFLOW_HOME")
 
 project_id = os.environ.get("GOOGLE_PROJECT_ID")
 
